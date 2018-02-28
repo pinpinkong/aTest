@@ -1,4 +1,4 @@
-# TestProblem
+# Expenses tracker
 Personal expenses management application that allows users to track how much money have they spent.
 (Little changed output formating to be more clear and show only entered date expenses on use of add command, 
 only list command shows all expenses for all dates.
