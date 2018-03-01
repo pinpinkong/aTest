@@ -3,7 +3,6 @@ package com.kd.aTestProblem.test;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -130,10 +129,9 @@ public class TestMainUtilities {
 		final String incorrectCurrency1 = "aud";
 		final String incorrectCurrency2 = "dfsdffds";
 
-		app.setCurrenciesData(app.parseCurrencies(app.getCurrencies()));
-		app.setCurrenciesRate(new LinkedHashMap<>());
-		app.getCurrenciesRate().put("USD", (double) 1);
-		app.getCurrenciesRate().putAll((Map<String, Double>) app.getCurrenciesData().get("rates"));
+		app.getDataObject().setCurrenciesData(app.parseCurrencies(app.getCurrencies()));
+		app.getDataObject().getCurrenciesRate().put("USD", (double) 1);
+		app.getDataObject().getCurrenciesRate().putAll((Map<String, Double>) app.getDataObject().getCurrenciesData().get("rates"));
 
 		assertEquals("correct", true, app.isCurrency(correctCurrency));
 		assertEquals("incorrect", false, app.isCurrency(incorrectCurrency1));
@@ -142,10 +140,9 @@ public class TestMainUtilities {
 
 	@Test
 	public void testAddParser() {
-		app.setCurrenciesData(app.parseCurrencies(app.getCurrencies()));
-		app.setCurrenciesRate(new LinkedHashMap<>());
-		app.getCurrenciesRate().put("USD", (double) 1);
-		app.getCurrenciesRate().putAll((Map<String, Double>) app.getCurrenciesData().get("rates"));
+		app.getDataObject().setCurrenciesData(app.parseCurrencies(app.getCurrencies()));
+		app.getDataObject().getCurrenciesRate().put("USD", (double) 1);
+		app.getDataObject().getCurrenciesRate().putAll((Map<String, Double>) app.getDataObject().getCurrenciesData().get("rates"));
 
 		final String correctInput1 = "add 2018-01-01 100 AUD milk";
 		final String correctInput2 = "add 2018-01-01 150 AUD milk cream butter";

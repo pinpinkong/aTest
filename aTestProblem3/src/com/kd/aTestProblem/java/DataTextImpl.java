@@ -1,6 +1,6 @@
 package com.kd.aTestProblem.java;
 
-public class DataTextImpl implements DataText{
+public class DataTextImpl implements DataText {
 
 	private double spent;
 	private String currency;

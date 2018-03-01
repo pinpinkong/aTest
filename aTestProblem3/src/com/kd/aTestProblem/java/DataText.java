@@ -8,6 +8,4 @@ public interface DataText {
 
 	public String getProduct();
 
-	public String toString();
-	
 }

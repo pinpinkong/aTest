@@ -6,7 +6,6 @@ import java.io.PrintStream;
 import org.junit.Test;
 
 import com.kd.aTestProblem.java.AppCheckCurrencyChanger;
-import com.kd.aTestProblem.java.Main;
 
 public class TestCommandHelp {
 	

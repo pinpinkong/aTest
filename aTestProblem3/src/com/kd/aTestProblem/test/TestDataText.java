@@ -1,9 +1,10 @@
 package com.kd.aTestProblem.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.kd.aTestProblem.java.DataText;
 import com.kd.aTestProblem.java.DataTextImpl;
 
 public class TestDataText {
@@ -13,7 +14,7 @@ public class TestDataText {
 		final double spent = 34.05;
 		final String currency = "AUD";
 		final String description = "Jar";
-		DataTextImpl dataText = new DataTextImpl(spent, currency,description);
+		DataText dataText = new DataTextImpl(spent, currency,description);
 		
 		assertEquals(34.05, dataText.getSpent(), 0.0);
 		assertEquals("AUD", dataText.getCurrency());

@@ -12,11 +12,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -26,9 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AppCheckCurrencyChanger implements AppStarter {
 	private final String urlPath = "http://api.fixer.io/latest?base=USD";
 	private boolean working = true;
-	private Map<String, Object> currenciesData;
-	private Map<String, Double> currenciesRate;
-	private Map<LocalDate, List<DataText>> programmData;
+	private DataObject dataObject= new DataObjectImpl();
 
 	public String reader() {
 		String data = "";
@@ -141,16 +137,16 @@ public class AppCheckCurrencyChanger implements AppStarter {
 
 			DataText text = new DataTextImpl(Double.parseDouble(data.get(2)), data.get(3), data.get(4));
 
-			if (programmData.containsKey(date)) {
-				programmData.get(date).add(text);
+			if (dataObject.getProgrammData().containsKey(date)) {
+				dataObject.getProgrammData().get(date).add(text);
 				System.out.println(date);
-				for (DataText dataText : programmData.get(date)) {
+				for (DataText dataText : dataObject.getProgrammData().get(date)) {
 					System.out.println("\t" + dataText);
 				}
 			} else {
 				List<DataText> textArray = new ArrayList<>();
 				textArray.add(text);
-				programmData.put(date, textArray);
+				dataObject.getProgrammData().put(date, textArray);
 				System.out.println(date);
 				System.out.println("\t" + text);
 			}
@@ -159,7 +155,7 @@ public class AppCheckCurrencyChanger implements AppStarter {
 
 	public void commandList() {
 		System.out.println("===========================================================");
-		for (Entry<LocalDate, List<DataText>> entry : programmData.entrySet()) {
+		for (Entry<LocalDate, List<DataText>> entry : dataObject.getProgrammData().entrySet()) {
 
 			System.out.println(entry.getKey());
 			for (DataText text : entry.getValue()) {
@@ -176,8 +172,8 @@ public class AppCheckCurrencyChanger implements AppStarter {
 			List<String> dateList = new ArrayList<>(Arrays.asList(dataArray.get(1).split("-")));
 			LocalDate date = LocalDate.of(Integer.parseInt(dateList.get(0)), Integer.parseInt(dateList.get(1)),
 					Integer.parseInt(dateList.get(2)));
-			if (programmData.containsKey(date)) {
-				programmData.remove(date);
+			if (dataObject.getProgrammData().containsKey(date)) {
+				dataObject.getProgrammData().remove(date);
 				System.out.println(date + " successfully removed");
 			} else {
 				System.out.println("Can't find " + date + " in the list");
@@ -195,14 +191,14 @@ public class AppCheckCurrencyChanger implements AppStarter {
 			double total = 0;
 			String currency = dataArray.get(1);
 			if (isCurrency(currency)) {
-				for (Entry<LocalDate, List<DataText>> entry : programmData.entrySet()) {
+				for (Entry<LocalDate, List<DataText>> entry : dataObject.getProgrammData().entrySet()) {
 					List<DataText> listData = entry.getValue();
 					for (DataText dataText : listData) {
 						if (dataText.getSpent() > 0) {
 							if (dataText.getCurrency().equals("USD")) {
 								total += dataText.getSpent();
 							} else {
-								double tempValue = currenciesRate.get(dataText.getCurrency());
+								double tempValue = dataObject.getCurrenciesRate().get(dataText.getCurrency());
 
 								total += dataText.getSpent() / tempValue;
 							}
@@ -210,7 +206,7 @@ public class AppCheckCurrencyChanger implements AppStarter {
 					}
 				}
 				if (!currency.equals("USD")) {
-					double tempValue = currenciesRate.get(currency);
+					double tempValue = dataObject.getCurrenciesRate().get(currency);
 
 					total = total * tempValue;
 				}
@@ -229,13 +225,13 @@ public class AppCheckCurrencyChanger implements AppStarter {
 	}
 
 	public void commandCurrencies() {
-		for (Entry<String, Double> entry : currenciesRate.entrySet()) {
+		for (Entry<String, Double> entry : dataObject.getCurrenciesRate().entrySet()) {
 			System.out.print(entry.getKey() + " ");
 		}
 	}
 
 	public void commandExchangeRates() {
-		for (Entry<String, Double> entry : currenciesRate.entrySet()) {
+		for (Entry<String, Double> entry : dataObject.getCurrenciesRate().entrySet()) {
 			System.out.println(entry.getKey() + ":" + entry.getValue());
 		}
 	}
@@ -375,11 +371,11 @@ public class AppCheckCurrencyChanger implements AppStarter {
 	}
 
 	public boolean isCurrency(String currency) {
-		if (currenciesRate.containsKey(currency)) {
+		if (dataObject.getCurrenciesRate().containsKey(currency)) {
 			return true;
 		} else {
 			System.out.println("Error: Currency invalid, please choose next time one of ");
-			for (Entry<String, Double> entry : currenciesRate.entrySet()) {
+			for (Entry<String, Double> entry : dataObject.getCurrenciesRate().entrySet()) {
 				System.out.print(entry.getKey() + " ");
 			}
 			System.out.println();
@@ -399,37 +395,19 @@ public class AppCheckCurrencyChanger implements AppStarter {
 	}
 
 	public void initialize() {		
-		currenciesData = parseCurrencies(getCurrencies());
-		currenciesRate = new LinkedHashMap<>();
-		programmData = new TreeMap<>();
+		dataObject.setCurrenciesData(parseCurrencies(getCurrencies()));
 
-		currenciesRate.put("USD", (double) 1);
-		currenciesRate.putAll((Map<String, Double>) currenciesData.get("rates"));
+		dataObject.getCurrenciesRate().put("USD", (double) 1);
+		dataObject.getCurrenciesRate().putAll((Map<String, Double>) dataObject.getCurrenciesData().get("rates"));
 		
 		System.out.println("App is running. type help for list of commands");
 	}
 
-	public Map<String, Object> getCurrenciesData() {
-		return currenciesData;
+	public DataObject getDataObject() {
+		return dataObject;
 	}
 
-	public void setCurrenciesData(Map<String, Object> currenciesData) {
-		this.currenciesData = currenciesData;
-	}
-
-	public Map<String, Double> getCurrenciesRate() {
-		return currenciesRate;
-	}
-
-	public void setCurrenciesRate(Map<String, Double> currenciesRate) {
-		this.currenciesRate = currenciesRate;
-	}
-
-	public Map<LocalDate, List<DataText>> getProgrammData() {
-		return programmData;
-	}
-
-	public void setProgrammData(Map<LocalDate, List<DataText>> programmData) {
-		this.programmData = programmData;
+	public void setDataObject(DataObjectImpl dataObject) {
+		this.dataObject = dataObject;
 	}
 }

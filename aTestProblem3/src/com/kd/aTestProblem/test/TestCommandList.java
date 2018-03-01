@@ -2,7 +2,6 @@ package com.kd.aTestProblem.test;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -21,20 +20,19 @@ public class TestCommandList {
 	@Before
 	public void setUp() {
 
-		app.setProgrammData(new TreeMap<>());
+		app.getDataObject().setProgrammData(new TreeMap<>());
 		List<DataText> dataText1 = new ArrayList<>();
 		List<DataTextImpl> dataText2 = new ArrayList<>();
 		dataText1.add(new DataTextImpl(22, "USD", "Gorm"));
 		dataText1.add(new DataTextImpl(22, "USD", "Gorm"));
 		dataText2.add(new DataTextImpl(22, "BRL", "Gorm"));
 
-		app.getProgrammData().put(LocalDate.of(2001, 10, 21), dataText1);
-		app.getProgrammData().put(LocalDate.of(2011, 10, 21), dataText1);
+		app.getDataObject().getProgrammData().put(LocalDate.of(2001, 10, 21), dataText1);
+		app.getDataObject().getProgrammData().put(LocalDate.of(2011, 10, 21), dataText1);
 
-		app.setCurrenciesData(app.parseCurrencies(app.getCurrencies()));
-		app.setCurrenciesRate(new LinkedHashMap<>());
-		app.getCurrenciesRate().put("USD", (double) 1);
-		app.getCurrenciesRate().putAll((Map<String, Double>) app.getCurrenciesData().get("rates"));
+		app.getDataObject().setCurrenciesData(app.parseCurrencies(app.getCurrencies()));
+		app.getDataObject().getCurrenciesRate().put("USD", (double) 1);
+		app.getDataObject().getCurrenciesRate().putAll((Map<String, Double>) app.getDataObject().getCurrenciesData().get("rates"));
 	}
 
 	@Test
